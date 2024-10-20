@@ -26,6 +26,13 @@ import java.time.Instant;
  */
 public class ClassifiedAd {
 
+
+	private Category cat;
+	private String desc;
+	private int price;
+	private Instant date;
+
+
 	/**
 	 * Initialise une nouvelle annonce. La date de cette nouvelle annonce est la
 	 * date courante au moment de l'exécution de ce constructeur.
@@ -46,6 +53,10 @@ public class ClassifiedAd {
 	 * @ensures getDate().isBefore(Instant.now());
 	 */
 	public ClassifiedAd(Category cat, String desc, int price) {
+		this.cat = cat;
+		this.desc = desc;
+		this.price = price;
+		this.date = Instant.now();
 	}
 
 	/**
@@ -56,7 +67,7 @@ public class ClassifiedAd {
 	 * @pure
 	 */
 	public Instant getDate() {
-		return null;
+		return this.date;
 	}
 
 	/**
@@ -67,7 +78,7 @@ public class ClassifiedAd {
 	 * @pure
 	 */
 	public String getDescription() {
-		return null;
+		return this.desc;
 	}
 
 	/**
@@ -85,7 +96,7 @@ public class ClassifiedAd {
 	 * @pure
 	 */
 	public boolean isBefore(ClassifiedAd ad) {
-		return false;
+		return this.getDate().isBefore(ad.getDate());
 	}
 
 	/**
@@ -103,7 +114,7 @@ public class ClassifiedAd {
 	 * @pure
 	 */
 	public boolean isAfter(ClassifiedAd ad) {
-		return false;
+		return this.getDate().isAfter(ad.getDate());
 	}
 
 	/**
@@ -127,7 +138,11 @@ public class ClassifiedAd {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return false;
+		if (!(obj instanceof ClassifiedAd)) {
+			return false;
+		}else{
+			return (getDate().equals(((ClassifiedAd) obj).getDate())) && (getDescription().equals(((ClassifiedAd) obj).getDescription())) && (getCategory().equals(((ClassifiedAd) obj).getCategory())) && (getPrice() == ((ClassifiedAd) obj).getPrice());
+		}
 	}
 
 	/**
@@ -139,7 +154,7 @@ public class ClassifiedAd {
 	 */
 	@Override
 	public int hashCode() {
-		return -1;
+		return this.getPrice()+this.getDescription().hashCode()+this.getCategory().hashCode();
 	}
 
 	/**
@@ -156,7 +171,7 @@ public class ClassifiedAd {
 	 */
 	@Override
 	public String toString() {
-		return null;
+		return "Cette Ad est de categoty "+this.getCategory().toString()+" et elle a etait mise en ligne le "+this.getDate().toString()+". Voici une description de cette derniere: "+this.getDescription().toString()+" et son prix est"+" "+this.getPrice();
 	}
 
 	/**
@@ -167,7 +182,7 @@ public class ClassifiedAd {
 	 * @pure
 	 */
 	public Category getCategory() {
-		return null;
+		return this.cat;
 	}
 
 	/**
@@ -178,7 +193,7 @@ public class ClassifiedAd {
 	 * @pure
 	 */
 	public int getPrice() {
-		return -1;
+		return this.price;
 	}
 
 }
