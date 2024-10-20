@@ -57,7 +57,7 @@ import static minebayd1.Category.*;
  *            (!hasNext() <==> nextIndex() == size(optCat.get()));
  * @invariant !contains(null);
  * @invariant (\forall int i, j; i >= 0 && i < j && j < size();
- *            !get(i).equals(get(j)));
+ * @invariant !get(i).equals(get(j)));
  * 
  * @author Marc Champesme
  * @since 27/09/2024
