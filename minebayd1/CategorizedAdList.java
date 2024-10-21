@@ -14,9 +14,8 @@ import static minebayd1.Category.*;
  * plus récente à la plus ancienne). Une CategorizedAdList ne peut pas contenir
  * d'éléments dupliqués, plus formelement, pour tout couple d'entiers (i, j)
  * tels que: <br/>
- * i >= 0 && j >= 0 && i != j && i < size() && j < size() on a
- * !get(i).equals(get(j)). Une CategorizedAdList prend en compte les catégories
- * des annonces en permettant:
+ * i >= 0 && j >= 0 && i != j && i < size() && j < size() on a !get(i).equals(get(j)). 
+ * Une CategorizedAdList prend en compte les catégories des annonces en permettant:
  * <ul>
  * <li>soit un parcours des annonces de toutes les catégories</li>
  * <li>soit un parcours des seules annonces d'une catégorie sélectionnée</li>
@@ -56,8 +55,8 @@ import static minebayd1.Category.*;
  * @invariant optCat.isPresent() ==> <br/>
  *            (!hasNext() <==> nextIndex() == size(optCat.get()));
  * @invariant !contains(null);
- * @invariant (\forall int i, j; i >= 0 && i < j && j < size();
- * @invariant !get(i).equals(get(j)));
+ * @invariant (\forall int i, j; i >= 0 && i < j && j < size(); <br/>
+ *            (!get(i).equals(get(j)));
  * 
  * @author Marc Champesme
  * @since 27/09/2024
