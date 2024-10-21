@@ -63,6 +63,11 @@ import static minebayd1.Category.*;
  * @version 20/10/2024
  */
 public class CategorizedAdList implements Cloneable {
+
+	
+	private ArrayList<Category>[] tabAd; //tableau d'instance de arrayList.
+	private Optional<Category> optCat;
+
 	/**
 	 * Initialise une nouvelle instance ne contenant aucune annonce.
 	 * 
@@ -76,6 +81,11 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public CategorizedAdList() {
+		this.tabAd = new ArrayList<Category>[Category.values().length];
+
+	    for(int i = 0; i < Category.values().length; ++i) {
+			this.tabAd[i] = new ArrayList<>();
+		}
 	}
 
 	/**
@@ -209,12 +219,9 @@ public class CategorizedAdList implements Cloneable {
 	 * 
 	 * @ensures \var Optional&lt;Category&gt; optCat = getSelectedCategory();
 	 * @ensures optCat.isEmpty() ==> (\result == size() <==> !hasNext());
-	 * @ensures optCat.isPresent() ==> (\result == size(optCat.get()) <==>
-	 *          !hasNext());
-	 * @ensures optCat.isEmpty() ==> (hasNext() <==> \result >= 0 && \result <
-	 *          size());
-	 * @ensures optCat.isPresent() ==> (hasNext() <==> \result >= 0 && \result <
-	 *          size(optCat.get()));
+	 * @ensures optCat.isPresent() ==> (\result == size(optCat.get()) <==> !hasNext());
+	 * @ensures optCat.isEmpty() ==> (hasNext() <==> \result >= 0 && \result < size());
+	 * @ensures optCat.isPresent() ==> (hasNext() <==> \result >= 0 && \result < size(optCat.get()));
 	 * 
 	 * @pure
 	 */
