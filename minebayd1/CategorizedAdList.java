@@ -11,25 +11,39 @@ import static minebayd1.Category.*;
 
 /**
  * Gestion d'une liste de ClassifiedAd triée selon la date de création (de la
- * plus récente à la plus ancienne). Une CategorizedAdList ne peut pas contenir
+ * plus récente à la plus ancienne). 
+ * 
+ * Une CategorizedAdList ne peut pas contenir
  * d'éléments dupliqués, plus formelement, pour tout couple d'entiers (i, j)
  * tels que: <br/>
  * i >= 0 && j >= 0 && i != j && i < size() && j < size() on a !get(i).equals(get(j)). 
+ * 
+ * 
  * Une CategorizedAdList prend en compte les catégories des annonces en permettant:
  * <ul>
  * <li>soit un parcours des annonces de toutes les catégories</li>
  * <li>soit un parcours des seules annonces d'une catégorie sélectionnée</li>
  * </ul>
+ * 
+ * 
  * Dans ce but, CategorizedAdList utilise une liste distincte (une ArrayList)
- * pour chaque catégorie. Les méthodes selectCategory, getSelectedCategory et
+ * pour chaque catégorie. 
+ * 
+ * 
+ * Les méthodes selectCategory, getSelectedCategory et
  * clearCatégory permettent de sélectionner ou déselectionner une catégorie
- * particulière. Lorsqu'une catégorie est sélectionnée, toutes les opérations
+ * particulière. 
+ * 
+ * 
+ * Lorsqu'une catégorie est sélectionnée, toutes les opérations
  * relatives aux itérations (startIteration, next, previous, ...) agissent
  * uniquement sur les annonces de cette catégorie.
+ * 
  * 
  * Pour les autres méthodes, celles possédant un paramètre de type Category
  * agissent uniquement sur cette catégorie, les autres méthodes agissant sur
  * toutes les annonces.
+ * 
  * 
  * Les méthodes modifiant le contenu de cette liste (add et remove), entraine
  * une réinitialisation de l'itération en cours (même effet qu'un appel à la
@@ -66,7 +80,7 @@ public class CategorizedAdList implements Cloneable {
 
 	
 	private ArrayList<Category>[] tabAd; //tableau d'instance de arrayList.
-	private Optional<Category> optCat;
+	private Optional<Category> optCat; //pourra etre accedder par la methode getSelectedCategory().
 
 	/**
 	 * Initialise une nouvelle instance ne contenant aucune annonce.
