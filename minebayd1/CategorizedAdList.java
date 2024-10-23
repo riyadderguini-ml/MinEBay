@@ -1,6 +1,6 @@
 /**
  * @author Riyad Derguini 12312754
- * Je déclare qu'il s'agit de mon propre travail
+ * Je déclare qu'il s'agit de mon propre travail.
  */
 package minebayd1;
 
@@ -79,7 +79,7 @@ import static minebayd1.Category.*;
 public class CategorizedAdList implements Cloneable {
 
 	
-	private ArrayList<Category>[] tabAd; //tableau d'instance de arrayList.
+	private ArrayList<ArrayList<Category>>  tabAd; //tableau d'instance de arrayList.
 	private Optional<Category> optCat; //pourra etre accedder par la methode getSelectedCategory().
 
 	/**
@@ -95,11 +95,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public CategorizedAdList() {
-		this.tabAd = new ArrayList<Category>[Category.values().length];
-
-	    for(int i = 0; i < Category.values().length; ++i) {
-			this.tabAd[i] = new ArrayList<>();
-		}
+		this.tabAd = new ArrayList();
 	}
 
 	/**
@@ -131,7 +127,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public Optional<Category> getSelectedCategory() {
-		return null;
+		return this.optCat;
 	}
 
 	/**

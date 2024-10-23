@@ -1,6 +1,6 @@
 /**
  * @author Riyad Derguini 12312754
- * Je déclare qu'il s'agit de mon propre travail
+ * Je déclare qu'il s'agit de mon propre travail.
  */
 package minebayd1;
 
