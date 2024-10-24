@@ -148,6 +148,7 @@ public class CategorizedAdList implements Cloneable {
 		this.optCat = Optional.empty(); // Optional.empty() retourne une instance vide d'un Optional object.
 	}
 
+	
 	/**
 	 * Initialise cette liste pour le démarrage d'une nouvelle itération sur les
 	 * annonces de cette liste. Cette itération s'effectue à partir de l'annonce la
