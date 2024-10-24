@@ -79,7 +79,7 @@ import static minebayd1.Category.*;
 public class CategorizedAdList implements Cloneable {
 
 	
-	private ArrayList<ArrayList<Category>> catAdList; //tableau d'instance de arrayList.
+	private ArrayList<ArrayList<ClassifiedAd>> catAdList; //tableau d'instance de arrayList.
 	private Optional<Category> optCat; //pourra etre accedder par la methode getSelectedCategory().
 
 	/**
@@ -95,7 +95,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public CategorizedAdList() {
-		this.catAdList = new ArrayList<ArrayList<Category>>();
+		this.catAdList = new ArrayList<ArrayList<ClassifiedAd>>();
 	    this.optCat =  Optional.empty();
 	}
 
@@ -470,10 +470,15 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	public int size() {
 		
-		int i = this.catAdList.size();
+		int sz = this.catAdList.size();
+		int cmp = 0;
+
+		for (int i = 0; i < sz; ++i) {
+			cmp = this.catAdList.get(i).size() + cmp; 
+		}
 		
 		
-		return -1;
+		return cmp;
 	}
 
 	/**
@@ -493,7 +498,11 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public int size(Category cat) {
-		return -1;
+		int idx = -1;
+		
+		while (!(this.catAdList.get(++idx).getFirst().getCategory().equals(cat)));
+		
+		return this.catAdList.get(idx).size();
 	}
 
 	/**
