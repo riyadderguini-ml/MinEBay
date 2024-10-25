@@ -6,6 +6,7 @@ package minebayd1;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Iterator;
 
 import static minebayd1.Category.*;
 
@@ -165,6 +166,16 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void startIteration() {
+		Iterator<ArrayList<ClassifiedAd>> adListIterator = this.catAdList.iterator(); //La methode iterator(), a chaque fois qu'on l'appel elle fait en sotre que l'iteration commence au debut de l'ArrayList. 
+	    Iterator<ClassifiedAd> adIterator;
+
+		while (adListIterator.hasNext()) {
+			Iterator<ArrayList<ClassifiedAd>> tmpList = adListIterator.next();
+
+			if ((this.optCat.get().equals(tmpList.getFirst().getCategory()))) {
+				adIterator = tmpList.
+			}
+		}
 	}
 
 	/**
