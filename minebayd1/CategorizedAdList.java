@@ -80,7 +80,7 @@ import static minebayd1.Category.*;
 public class CategorizedAdList implements Cloneable {
 
 	
-	private ArrayList<ArrayList<ClassifiedAd>> catAdList; //tableau d'instance de arrayList.
+	private ArrayList<ClassifiedAd> [] tabCatAd; //tableau d'instance de arrayList.
 	private Optional<Category> optCat; //pourra etre accedder par la methode getSelectedCategory().
 
 	/**
@@ -96,7 +96,12 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public CategorizedAdList() {
-		this.catAdList = new ArrayList<ArrayList<ClassifiedAd>>();
+		this.tabCatAd = new ArrayList[5];
+
+		for(int i = 0; i < this.tabCatAd.length; i++) {
+			this.tabCatAd[i] = new ArrayList<ClassifiedAd>();
+		}
+		
 	    this.optCat =  Optional.empty();
 	}
 
@@ -117,6 +122,7 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	public void selectCategory(Category cat) {
 		this.optCat = Optional.ofNullable(cat);
+		//Je n'ai toujours pas fait les initialisations nécessaire pour démarrer une nouvelle itération de la même manière qu'un appel à startIteration()  YOYOYO
 	}
 
 	/**
@@ -166,16 +172,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void startIteration() {
-		Iterator<ArrayList<ClassifiedAd>> adListIterator = this.catAdList.iterator(); //La methode iterator(), a chaque fois qu'on l'appel elle fait en sotre que l'iteration commence au debut de l'ArrayList. 
-	    Iterator<ClassifiedAd> adIterator;
-
-		while (adListIterator.hasNext()) {
-			Iterator<ArrayList<ClassifiedAd>> tmpList = adListIterator.next();
-
-			if ((this.optCat.get().equals(tmpList.getFirst().getCategory()))) {
-				adIterator = tmpList.
-			}
-		}
+	
 	}
 
 	/**
@@ -481,11 +478,11 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	public int size() {
 		
-		int sz = this.catAdList.size();
+		
 		int cmp = 0;
 
-		for (int i = 0; i < sz; ++i) {
-			cmp = this.catAdList.get(i).size() + cmp; 
+		for (int i = 0; i < this.tabCatAd.length; ++i) {
+			cmp = this.tabCatAd[i].size() + cmp; 
 		}
 		
 		
@@ -509,11 +506,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public int size(Category cat) {
-		int idx = -1;
-		
-		while (!(this.catAdList.get(++idx).getFirst().getCategory().equals(cat)));
-		
-		return this.catAdList.get(idx).size();
+		return -1;
 	}
 
 	/**
@@ -591,6 +584,6 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return null;
+		return "this.lastIndex()"+"this.nextIndex()"+"this.previousIndex()"+this.getSelectedCategory().toString() ;
 	}
 }
