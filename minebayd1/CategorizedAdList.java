@@ -869,7 +869,7 @@ public class CategorizedAdList implements Cloneable {
 		CategorizedAdList clone = new CategorizedAdList();
 
 		for(int i = 0; i < this.tabCatAd.length; i++){
-			clone.tabCatAd[i] = this.tabCatAd[i].clone();
+			clone.tabCatAd[i] = (ArrayList<ClassifiedAd>) this.tabCatAd[i].clone();
 		}
 
 		return clone;
