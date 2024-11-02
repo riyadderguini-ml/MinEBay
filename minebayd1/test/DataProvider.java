@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-import minebayd1.ClassifiedAdList;
+
 import minebayd1.AdState;
 import minebayd1.CategorizedAdList;
 import minebayd1.Category;
@@ -128,9 +128,7 @@ public class DataProvider {
 		return getRandomElt(allUsers);
 	}
 
-	public static ClassifiedAdList newsFeedSupplier() {
-		return new ClassifiedAdList(getRandomElt(allUsers));
-	}
+
 
 	public static String stringSupplier() {
 		if (randBool(50)) {
