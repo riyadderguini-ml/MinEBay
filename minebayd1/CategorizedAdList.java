@@ -207,7 +207,7 @@ public class CategorizedAdList implements Cloneable {
 
 		}
 
-		this.IndxAdPointedTo = 0; // im not sure yet if this @ensures nextIndex() == 0;
+		this.IndxAdPointedTo = -1;
 
 	}
 
@@ -294,17 +294,33 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	public ClassifiedAd next() {
 
+		// for clearence :
+
+		// isBefore(ad) : Teste si cette annonce a été publiée avant l'annonce
+		// spécifiée.
+
+		// isAfter(ad) : Teste si cette annonce a été publié après l'annonce spécifiée.
+		ClassifiedAd nextJustOlderAd = null;
+
 		// in the case where no cat is selected.
 		if (!(this.getSelectedCategory().isPresent())) {
 
 			for (int i = 0; i < this.tabCatAd.length; i++) {
 				for (int j = 0; j < this.tabCatAd[i].size(); j++) {
-					if (this.AdPointedTo.isBefore(tabCatAd[i].get(j))) {
-						this.AdPointedTo = tabCatAd[i].get(j);
-						return tabCatAd[i].get(j);
+					// Find an Ad older than the AdPointedto.
+					if (this.AdPointedTo.isAfter(tabCatAd[i].get(j))) {
+						// Update nextJustOlderAd if we haven't set it yet, or if we found a newer
+						// "Older" Ad.
+						if (nextJustOlderAd == null || tabCatAd[i].get(j).isAfter(nextJustOlderAd)) {
+							nextJustOlderAd = tabCatAd[i].get(j);
+						}
+
 					}
 				}
 			}
+
+			this.IndxAdPointedTo += 1;
+			return nextJustOlderAd;
 
 		}
 
@@ -313,20 +329,26 @@ public class CategorizedAdList implements Cloneable {
 
 			int indx = 0;
 
-			while (!(this.tabCatAd[0].get(0).getCategory().equals(this.optCat.get()))) {
+			while (!(this.tabCatAd[indx].get(0).getCategory().equals(this.getSelectedCategory().get()))) {
 				indx = indx + 1;
 			}
 
 			for (int j = 0; j < this.tabCatAd[indx].size(); j++) {
-				if (this.AdPointedTo.isBefore(tabCatAd[i].get(j))) {
-					this.AdPointedTo = tabCatAd[i].get(j);
-					return tabCatAd[i].get(j);
+				// Find an Ad older than the AdPointedto.
+				if (this.AdPointedTo.isAfter(tabCatAd[indx].get(j))) {
+					// Update nextJustOlderAd if we haven't set it yet, or if we found a newer
+					// "Older" Ad.
+					if (nextJustOlderAd == null || tabCatAd[indx].get(j).isAfter(nextJustOlderAd)) {
+						nextJustOlderAd = tabCatAd[indx].get(j);
+					}
+
 				}
 			}
 
-		}
+			this.IndxAdPointedTo += 1;
+			return nextJustOlderAd;
 
-		this.IndxAdPointedTo += 1;
+		}
 
 	}
 
@@ -354,13 +376,13 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public int nextIndex() {
-		if (this.optCat.isEmpty()) {
+		if (this.getSelectedCategory().isEmpty()) {
 			if (!(hasNext())) {
 				return size();
 			}
 		}
 
-		if (this.optCat.isPresent()) {
+		if (this.getSelectedCategory().isPresent()) {
 			if (!(hasNext())) {
 				return size(this.optCat.get());
 			}
@@ -391,11 +413,11 @@ public class CategorizedAdList implements Cloneable {
 			return false;
 		}
 
-		if (!(this.optCat.isPresent())) {
+		if (!(this.getSelectedCategory().isPresent())) {
 
 			for (int i = 0; i < this.tabCatAd.length; i++) {
 				for (int j = 0; j < this.tabCatAd[i].size(); j++) {
-					if (tabCatAd[i].get(j).isBefore(this.AdPointedTo)) {
+					if (this.AdPointedTo.isAfter(tabCatAd[i].get(j))) {
 						return true;
 					}
 				}
@@ -407,12 +429,12 @@ public class CategorizedAdList implements Cloneable {
 
 			int indx = 0;
 
-			while (!(this.tabCatAd[0].get(0).getCategory().equals(this.optCat.get()))) {
+			while (!(this.tabCatAd[indx].get(0).getCategory().equals(this.getSelectedCategory().get()))) {
 				indx = indx + 1;
 			}
 
 			for (int j = 0; j < this.tabCatAd[indx].size(); j++) {
-				if (tabCatAd[i].get(j).isBefore(this.AdPointedTo)) {
+				if (this.AdPointedTo.isAfter(tabCatAd[indx].get(j))) {
 					return true;
 				}
 			}
@@ -447,38 +469,58 @@ public class CategorizedAdList implements Cloneable {
 	 * 
 	 */
 	public ClassifiedAd previous() {
-		if (hasPrevious()) {
-			// in the case where no cat is selected.
-			if (!(this.optCat.isPresent())) {
+		// for clearence :
 
-				for (int i = 0; i < this.tabCatAd.length; i++) {
-					for (int j = 0; j < this.tabCatAd[i].size(); j++) {
-						if (tabCatAd[i].get(j).isBefore(this.AdPointedTo)) {
-							return tabCatAd[i].get(j);
+		// isBefore(ad) : Teste si cette annonce a été publiée avant l'annonce
+		// spécifiée.
+
+		// isAfter(ad) : Teste si cette annonce a été publié après l'annonce spécifiée.
+		ClassifiedAd nextJustNewerAd = null;
+
+		// in the case where no cat is selected.
+		if (!(this.getSelectedCategory().isPresent())) {
+
+			for (int i = 0; i < this.tabCatAd.length; i++) {
+				for (int j = 0; j < this.tabCatAd[i].size(); j++) {
+					// Find an Ad newer than the AdPointedto.
+					if (this.AdPointedTo.isBefore(tabCatAd[i].get(j))) {
+
+						if (nextJustNewerAd == null || tabCatAd[i].get(j).isBefore(nextJustNewerAd)) {
+							nextJustNewerAd = tabCatAd[i].get(j);
 						}
+
 					}
 				}
-
-			}
-
-			// if a category is selected.
-			else {
-
-				int indx = 0;
-
-				while (!(this.tabCatAd[0].get(0).getCategory().equals(this.optCat.get()))) {
-					indx = indx + 1;
-				}
-
-				for (int j = 0; j < this.tabCatAd[indx].size(); j++) {
-					if (tabCatAd[i].get(j).isBefore(this.AdPointedTo)) {
-						return tabCatAd[i].get(j);
-					}
-				}
-
 			}
 
 			this.IndxAdPointedTo -= 1;
+			return nextJustNewerAd;
+
+		}
+
+		// if a category is selected.
+		else {
+
+			int indx = 0;
+
+			while (!(this.tabCatAd[indx].get(0).getCategory().equals(this.getSelectedCategory().get()))) {
+				indx = indx + 1;
+			}
+
+			for (int j = 0; j < this.tabCatAd[indx].size(); j++) {
+
+				if (this.AdPointedTo.isBefore(tabCatAd[indx].get(j))) {
+
+					if (nextJustNewerAd == null || tabCatAd[indx].get(j).isBefore(nextJustNewerAd)) {
+						nextJustNewerAd = tabCatAd[indx].get(j);
+					}
+
+				}
+			}
+
+			this.IndxAdPointedTo -= 1;
+			return nextJustNewerAd;
+
 		}
 	}
 
@@ -527,7 +569,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public int lastIndex() {
-		return -1;
+		return this.IndxAdPointedTo;
 	}
 
 	/**
@@ -551,7 +593,16 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public ClassifiedAd get(Category cat, int i) {
-		return null;
+		
+		//selectCategory(cat);
+		
+		int indx = 0;
+
+		while (!(this.tabCatAd[indx].get(0).getCategory().equals(this.getSelectedCategory().get()))) {
+			indx = indx + 1;
+		}
+
+		return this.tabCatAd[0].get(i);
 	}
 
 	/**
@@ -572,7 +623,14 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public ClassifiedAd get(int i) {
-		return null;
+		
+		startIteration();
+
+		while (hasNext() && this.IndxAdPointedTo != i) {
+			next();
+		}
+		
+		return this.AdPointedTo;
 	}
 
 	/**
@@ -595,6 +653,16 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void add(ClassifiedAd elt) {
+
+		int indx = 0;
+
+		while (!(this.tabCatAd[indx].get(0).getCategory().equals(elt.getCategory()))) {
+			indx = indx + 1;
+		}
+
+		this.tabCatAd[indx].add(elt);
+
+		startIteration();
 	}
 
 	/**
