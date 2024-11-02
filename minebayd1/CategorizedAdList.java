@@ -4,6 +4,7 @@
  */
 package minebayd1;
 
+import java.lang.classfile.ClassBuilder;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Iterator;
@@ -593,9 +594,9 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public ClassifiedAd get(Category cat, int i) {
-		
-		//selectCategory(cat);
-		
+
+		// selectCategory(cat);
+
 		int indx = 0;
 
 		while (!(this.tabCatAd[indx].get(0).getCategory().equals(this.getSelectedCategory().get()))) {
@@ -623,13 +624,13 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public ClassifiedAd get(int i) {
-		
+
 		startIteration();
 
 		while (hasNext() && this.IndxAdPointedTo != i) {
 			next();
 		}
-		
+
 		return this.AdPointedTo;
 	}
 
@@ -697,6 +698,20 @@ public class CategorizedAdList implements Cloneable {
 	 * 
 	 */
 	public boolean remove(Object o) {
+
+		int indx = 0;
+
+		ClassifiedAd ad = (ClassifiedAd) o;
+
+		while (!(this.tabCatAd[indx].get(0).getCategory().equals(ad.getCategory()))) {
+			indx = indx + 1;
+		}
+
+		if (this.tabCatAd[indx].contains(o)) {
+			this.tabCatAd[indx].remove(o);
+			return true;
+		}
+
 		return false;
 	}
 
@@ -718,6 +733,20 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public boolean contains(Object o) {
+
+		int indx = 0;
+
+		ClassifiedAd ad = (ClassifiedAd) o;
+
+		while (!(this.tabCatAd[indx].get(0).getCategory().equals(ad.getCategory()))) {
+			indx = indx + 1;
+		}
+
+		if (this.tabCatAd[indx].contains(o)) {
+
+			return true;
+		}
+
 		return false;
 	}
 
@@ -759,7 +788,14 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public int size(Category cat) {
-		return -1;
+
+		int indx = 0;
+
+		while (!(this.tabCatAd[indx].get(0).getCategory().equals(cat))) {
+			indx = indx + 1;
+		}
+
+		return this.tabCatAd[indx].size();
 	}
 
 	/**
@@ -789,7 +825,31 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return false;
+
+		if (!(obj instanceof CategorizedAdList)) {
+			return false;
+		}
+
+		CategorizedAdList x = (CategorizedAdList) obj;
+
+		CategorizedAdList A = this.clone();
+		CategorizedAdList B = x.clone();
+
+		A.startIteration();
+		B.startIteration();
+
+		while (A.hasNext() && B.hasNext()) {
+			A.next();
+			B.next();
+
+			if (!(A.AdPointedTo.equals(B.AdPointedTo))) {
+				return false;
+			}
+		}
+
+		return this.size() == x.size() && this.previousIndex() == x.previousIndex() && this.nextIndex() == x.nextIndex()
+				&& this.lastIndex() == x.lastIndex() && this.getSelectedCategory().equals(x.getSelectedCategory())
+				&& this.hashCode() == x.hashCode();
 	}
 
 	/**
@@ -806,7 +866,13 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	@Override
 	public CategorizedAdList clone() {
-		return null;
+		CategorizedAdList clone = new CategorizedAdList();
+
+		for(int i = 0; i < this.tabCatAd.length; i++){
+			clone.tabCatAd[i] = this.tabCatAd[i].clone();
+		}
+
+		return clone;
 	}
 
 	/**
@@ -818,7 +884,13 @@ public class CategorizedAdList implements Cloneable {
 	 */
 	@Override
 	public int hashCode() {
-		return -1;
+		int hashint = 0;
+
+		for (int i = 0; i < this.tabCatAd.length; i++) {
+			hashint = this.tabCatAd[i].hashCode() + hashint;
+		}
+
+		return hashint;
 	}
 
 	/**
