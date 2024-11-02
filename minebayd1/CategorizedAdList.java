@@ -83,7 +83,7 @@ import static minebayd1.Category.*;
 public class CategorizedAdList implements Cloneable {
 
 	private ArrayList<ClassifiedAd>[] tabCatAd; // tableau d'instance de ArrayList<ClassifiedAd>.
-	private Optional<Category> optCat; // pourra etre accedder par la methode getSelectedCategory().
+	private Optional<Category> SelectedCategory; // pourra etre accedder par la methode getSelectedCategory().
 	private ClassifiedAd AdPointedTo;
 	private int IndxAdPointedTo;
 
@@ -106,7 +106,7 @@ public class CategorizedAdList implements Cloneable {
 			this.tabCatAd[i] = new ArrayList<ClassifiedAd>();
 		}
 
-		this.optCat = Optional.empty();
+		this.SelectedCategory = Optional.empty();
 
 	}
 
@@ -126,7 +126,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void selectCategory(Category cat) {
-		this.optCat = Optional.ofNullable(cat);
+		this.SelectedCategory = Optional.ofNullable(cat);
 		this.startIteration();
 	}
 
@@ -141,7 +141,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public Optional<Category> getSelectedCategory() {
-		return this.optCat;
+		return this.SelectedCategory;
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void clearSelectedCategory() {
-		this.optCat = Optional.empty(); // Optional.empty() retourne une instance vide d'un Optional object.
+		this.SelectedCategory = Optional.empty(); // Optional.empty() retourne une instance vide d'un Optional object.
 		this.startIteration();
 	}
 
@@ -385,7 +385,8 @@ public class CategorizedAdList implements Cloneable {
 
 		if (this.getSelectedCategory().isPresent()) {
 			if (!(hasNext())) {
-				return size(this.optCat.get());
+				return size(this.SelectedCategory
+						.get());
 			}
 		}
 
@@ -788,6 +789,7 @@ public class CategorizedAdList implements Cloneable {
 	 * @pure
 	 */
 	public int size(Category cat) {
+	
 
 		int indx = 0;
 
@@ -868,7 +870,7 @@ public class CategorizedAdList implements Cloneable {
 	public CategorizedAdList clone() {
 		CategorizedAdList clone = new CategorizedAdList();
 
-		for(int i = 0; i < this.tabCatAd.length; i++){
+		for (int i = 0; i < this.tabCatAd.length; i++) {
 			clone.tabCatAd[i] = (ArrayList<ClassifiedAd>) this.tabCatAd[i].clone();
 		}
 

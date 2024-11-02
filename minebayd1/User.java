@@ -80,6 +80,14 @@ import static minebayd1.AdState.*;
  * 
  */
 public class User {
+	private String userName;
+	private String password;
+	private AdState SelectedAdState;
+	private Optional<Category> SelectedCategory;
+	private Instant RegistrationDate;
+	private int AvailableCash;
+	private CategorizedAdList[] Catalogue;
+
 	/**
 	 * Initialise une nouvelle instance ayant les nom et mot de passe spécifiés. La
 	 * date d'inscription du nouvel utilisateur est la date au moment de l'exécution
@@ -106,6 +114,24 @@ public class User {
 	 * @ensures lastIndex() == -1;
 	 */
 	public User(String userName, String password) {
+		this.userName = userName;
+		this.password = password;
+		this.RegistrationDate = Instant.now();
+		this.AvailableCash = 1000000;
+		this.SelectedAdState = AdState.OPEN;
+		this.SelectedCategory = Optional.empty();
+		this.startIteration();
+
+		this.Catalogue = new CategorizedAdList[3];
+
+		// OPEN STATE:
+		this.Catalogue[0] = new CategorizedAdList();
+
+		// CLOSED STATE:
+		this.Catalogue[1] = new CategorizedAdList();
+
+		// PURCHASE STATE:
+		this.Catalogue[1] = new CategorizedAdList();
 	}
 
 	/**
@@ -118,7 +144,7 @@ public class User {
 	 * @pure
 	 */
 	public AdState getSelectedAdState() {
-		return null;
+		return this.SelectedAdState;
 	}
 
 	/**
@@ -136,6 +162,7 @@ public class User {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void selectAdState(AdState state) {
+		this.SelectedAdState = state;
 	}
 
 	/**
@@ -153,6 +180,8 @@ public class User {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void selectCategory(Category cat) {
+		this.SelectedCategory = Optional.ofNullable(cat);
+		this.startIteration();
 	}
 
 	/**
@@ -168,7 +197,7 @@ public class User {
 	 * @pure
 	 */
 	public Optional<Category> getSelectedCategory() {
-		return null;
+		return this.SelectedCategory;
 	}
 
 	/**
@@ -185,6 +214,8 @@ public class User {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void clearSelectedCategory() {
+		this.SelectedCategory = Optional.empty();
+		this.startIteration();
 	}
 
 	/**
@@ -195,7 +226,7 @@ public class User {
 	 * @pure
 	 */
 	public String getName() {
-		return null;
+		return this.userName;
 	}
 
 	/**
@@ -206,7 +237,7 @@ public class User {
 	 * @pure
 	 */
 	public String getPassword() {
-		return null;
+		return this.password;
 	}
 
 	/**
@@ -217,7 +248,7 @@ public class User {
 	 * @pure
 	 */
 	public Instant getRegistrationDate() {
-		return null;
+		return this.RegistrationDate;
 	}
 
 	/**
@@ -231,7 +262,7 @@ public class User {
 	 * @pure
 	 */
 	public int getAvailableCash() {
-		return -1;
+		return this.AvailableCash;
 	}
 
 	/**
@@ -274,6 +305,16 @@ public class User {
 	 * @ensures vendor.lastIndex() == -1; }
 	 */
 	public void buy(User vendor, ClassifiedAd ad) {
+		vendor.Catalogue[1].add(ad);
+		vendor.Catalogue[0].remove(ad);
+		vendor.AvailableCash += ad.getPrice();
+
+		this.Catalogue[2].add(ad);
+		this.AvailableCash -= ad.getPrice();
+
+		vendor.startIteration();
+		this.startIteration();
+
 	}
 
 	/**
@@ -308,7 +349,16 @@ public class User {
 	 * @ensures getSelectedAdState().equals(OPEN) ==> lastIndex() == -1;
 	 */
 	public ClassifiedAd add(Category cat, String msg, int price) {
-		return null;
+
+		ClassifiedAd ad = new ClassifiedAd(cat, msg, price);
+
+		this.Catalogue[0].add(ad);
+
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+			this.startIteration();
+		}
+
+		return ad;
 	}
 
 	/**
@@ -324,7 +374,8 @@ public class User {
 	 * @pure
 	 */
 	public int size() {
-		return -1;
+
+		return this.size(this.getSelectedAdState(), this.getSelectedCategory());
 	}
 
 	/**
@@ -346,7 +397,20 @@ public class User {
 	 * @pure
 	 */
 	public int size(AdState state, Optional<Category> cat) {
-		return -1;
+		if (state.equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].size(cat.get());
+
+		} else {
+
+			if (state.equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].size(cat.get());
+			} else {
+				return this.Catalogue[2].size(cat.get());
+			}
+		}
+
 	}
 
 	/**
@@ -370,7 +434,7 @@ public class User {
 	 * @pure
 	 */
 	public ClassifiedAd get(int i) {
-		return null;
+		return this.get(this.getSelectedAdState(), this.getSelectedCategory(), i);
 	}
 
 	/**
@@ -394,7 +458,20 @@ public class User {
 	 * @pure
 	 */
 	public ClassifiedAd get(AdState state, Optional<Category> cat, int i) {
-		return null;
+		if (state.equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].get(cat.get(), i);
+
+		} else {
+			if (state.equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].get(cat.get(), i);
+
+			} else {
+				return this.Catalogue[2].get(cat.get(), i);
+			}
+		}
+
 	}
 
 	/**
@@ -414,7 +491,20 @@ public class User {
 	 * @pure
 	 */
 	public boolean containsInState(AdState state, Object obj) {
-		return false;
+		if (state.equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].contains(obj);
+
+		} else {
+			if (state.equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].contains(obj);
+
+			} else {
+				return this.Catalogue[2].contains(obj);
+			}
+		}
+
 	}
 
 	/**
@@ -435,6 +525,21 @@ public class User {
 	 * @ensures lastIndex() == -1;
 	 */
 	public void startIteration() {
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			this.Catalogue[0].startIteration();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				this.Catalogue[1].startIteration();
+
+			} else {
+
+				this.Catalogue[2].startIteration();
+			}
+		}
+
 	}
 
 	/**
@@ -457,7 +562,20 @@ public class User {
 	 * @pure
 	 */
 	public boolean hasNext() {
-		return false;
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].hasNext();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].hasNext();
+
+			} else {
+
+				return this.Catalogue[2].hasNext();
+			}
+		}
 	}
 
 	/**
@@ -486,7 +604,20 @@ public class User {
 	 * @ensures lastIndex() == previousIndex();
 	 */
 	public ClassifiedAd next() {
-		return null;
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].next();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].next();
+
+			} else {
+
+				return this.Catalogue[2].next();
+			}
+		}
 	}
 
 	/**
@@ -508,7 +639,20 @@ public class User {
 	 * @pure
 	 */
 	public int nextIndex() {
-		return -1;
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].nextIndex();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].nextIndex();
+
+			} else {
+
+				return this.Catalogue[2].nextIndex();
+			}
+		}
 	}
 
 	/**
@@ -530,7 +674,20 @@ public class User {
 	 * @pure
 	 */
 	public boolean hasPrevious() {
-		return false;
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].hasPrevious();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].hasPrevious();
+
+			} else {
+
+				return this.Catalogue[2].hasPrevious();
+			}
+		}
 	}
 
 	/**
@@ -558,7 +715,20 @@ public class User {
 	 * @ensures lastIndex() == nextIndex();
 	 */
 	public ClassifiedAd previous() {
-		return null;
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].previous();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].previous();
+
+			} else {
+
+				return this.Catalogue[2].previous();
+			}
+		}
 	}
 
 	/**
@@ -571,7 +741,8 @@ public class User {
 	 * Si une catégorie est sélectionnée, cette itération ne concerne que les
 	 * annonces de cette catégorie.
 	 * 
-	 * @return l'index de l'annonce qui sera renvoyé par le prochain appel à previous();
+	 * @return l'index de l'annonce qui sera renvoyé par le prochain appel à
+	 *         previous();
 	 *         ou -1
 	 * 
 	 * @ensures \result == -1 <==> !hasPrevious();
@@ -580,9 +751,22 @@ public class User {
 	 * @pure
 	 */
 	public int previousIndex() {
-		return -1;
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].previousIndex();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].previousIndex();
+
+			} else {
+
+				return this.Catalogue[2].previousIndex();
+			}
+		}
 	}
-	
+
 	/**
 	 * Renvoie l'index de l'annonce qui a été renvoyée par le dernier appel à
 	 * previous() ou next(). Si next() ou previous() n'ont pas été appelé depuis le
@@ -593,7 +777,7 @@ public class User {
 	 * 
 	 * Si une catégorie est sélectionnée, cette itération ne concerne que les
 	 * annonces de cette catégorie.
-	 *  
+	 * 
 	 * @return l'index de l'annonce qui a été renvoyé par le dernier appel à
 	 *         previous() ou next(); ou -1
 	 * 
@@ -602,8 +786,22 @@ public class User {
 	 * @pure
 	 */
 	public int lastIndex() {
-		return -1;
+		if (this.getSelectedAdState().equals(AdState.OPEN)) {
+
+			return this.Catalogue[0].lastIndex();
+
+		} else {
+			if (this.getSelectedAdState().equals(AdState.CLOSED)) {
+
+				return this.Catalogue[1].lastIndex();
+
+			} else {
+
+				return this.Catalogue[2].lastIndex();
+			}
+		}
 	}
+
 	/**
 	 * Renvoie une chaîne de caractères contenant le nom de ce User ainsi que le
 	 * nombre d'annonces de cet utilisateur dans les toirs états possibles (OPEN,
@@ -622,6 +820,15 @@ public class User {
 	 */
 	@Override
 	public String toString() {
-		return null;
+		// Récupère le nom de l'utilisateur
+		String userName = this.getName();
+    
+		// Récupère le nombre d'annonces dans chaque état
+		int openAds = size(AdState.OPEN, Optional.empty());
+		int closedAds = size(AdState.CLOSED, Optional.empty());
+		int purchasedAds = size(AdState.PURCHASE, Optional.empty());
+		
+		// Crée la chaîne de caractères à retourner
+		return "User: " + userName + " | OPEN: " + openAds + " | CLOSED: " + closedAds + " | PURCHASE: " + purchasedAds;
 	}
 }
